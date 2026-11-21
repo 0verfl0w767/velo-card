@@ -27,7 +27,13 @@ query VeloCard($username: String!, $limit: Int, $tag: String) {
 
 export class NotFoundError extends Error {}
 
-const TIMEOUT = 4000;
+const TIMEOUT = 5000;
+const IMG_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+  Accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+  Referer: "https://velog.io/",
+};
 
 async function gql(query, variables) {
   const res = await fetch(VELOG_GRAPHQL, {
@@ -52,7 +58,7 @@ function toBase64(buffer) {
 }
 
 async function download(url, maxBytes) {
-  const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT) });
+  const res = await fetch(url, { headers: IMG_HEADERS, signal: AbortSignal.timeout(TIMEOUT) });
   if (!res.ok) return null;
   const type = (res.headers.get("content-type") || "").split(";")[0];
   if (!type.startsWith("image/")) return null;
@@ -63,16 +69,28 @@ async function download(url, maxBytes) {
 
 export async function toDataUri(url, { w = 400, h = 0 } = {}) {
   if (!url) return null;
-  const proxy =
+  const wsrv =
     `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=${w * 2}` +
     (h ? `&h=${h * 2}&fit=cover&a=attention` : "") +
-    `&output=jpg&q=72&default=1`;
+    `&output=jpg&q=72`;
+  let wp = null;
+  if (/^https?:\/\//i.test(url)) {
+    let clean = url.replace(/^https?:\/\//i, "");
+    try {
+      clean = encodeURI(decodeURI(clean));
+    } catch {}
+    wp = `https://i0.wp.com/${clean}?` + (h ? `resize=${w * 2},${h * 2}` : `w=${w * 2}`) + `&quality=75`;
+  }
+
+  for (const candidate of [wsrv, wp]) {
+    if (!candidate) continue;
+    try {
+      const hit = await download(candidate, 300 * 1024);
+      if (hit) return hit;
+    } catch {}
+  }
   try {
-    const viaProxy = await download(proxy, 300 * 1024);
-    if (viaProxy) return viaProxy;
-  } catch {}
-  try {
-    return await download(url, 600 * 1024);
+    return await download(url, 1500 * 1024);
   } catch {
     return null;
   }
