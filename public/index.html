@@ -54,18 +54,6 @@
       font-size: 16px;
       letter-spacing: -0.02em;
     }
-    .brand-badge {
-      display: inline-flex;
-      align-items: center;
-      height: 22px;
-      padding: 0 8px;
-      border-radius: 99px;
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 1;
-      background: var(--accent-soft);
-      color: var(--accent-hover);
-    }
     main {
       max-width: 1360px;
       margin: 0 auto;
@@ -692,7 +680,6 @@
           <path fill="#fff" d="M49 65.4v-6.4c7.2-1.4 17.6-2.3 25.3-2.3 6.5 0 8.9 3 8.9 8.4l-0.5 40.6c13.7-15.6 22-31.1 22-43.5 0-4-1-6.7-3.6-9.2 7.5-1.8 13.6-2.6 19.6-2.6 6.1 0 10.2 3 10.2 10.2 0 21.3-21.6 51.2-51.7 74.7-6.5 0-13.2 0.1-19.9 0.2l1.2-63.8c0-4.6-1.2-6.3-11.5-6.3z"/>
         </svg>
         <span>velo-card</span>
-        <span class="brand-badge" id="envBadge">로컬 테스트</span>
       </div>
       <button type="button" class="btn btn-sm" id="resetBtn">설정 초기화</button>
     </div>
@@ -703,7 +690,6 @@
       <section class="panel">
         <div class="section-head">
           <h2 class="section-title">기본 및 레이아웃</h2>
-          <span class="section-sub">아이디·태그 입력 후 Enter 또는 적용</span>
         </div>
         <div class="top-inputs">
           <div class="field">
@@ -981,7 +967,6 @@
     const $ = (id) => document.getElementById(id);
     const HEX = /^([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
     const isLocal = ["localhost", "127.0.0.1", "::1"].includes(location.hostname);
-    $("envBadge").textContent = isLocal ? "로컬 테스트" : "배포 환경";
 
     function showToast(msg) {
       const el = $("toast");
