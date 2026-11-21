@@ -975,11 +975,83 @@
       colors: {},
       flags: {},
       codeTab: "markdown",
+      stageBg: "light",
     };
 
+    const STORAGE_KEY = "velo_card_state_v1";
     const $ = (id) => document.getElementById(id);
     const HEX = /^([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
     const isLocal = ["localhost", "127.0.0.1", "::1"].includes(location.hostname);
+
+    function saveState() {
+      try {
+        const { allTags, ...saved } = state;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+      } catch {}
+    }
+
+    function restoreState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return;
+        if (typeof parsed.name === "string" && parsed.name.trim()) state.name = parsed.name.trim().replace(/^@/, "");
+        if (LAYOUTS[parsed.layout]) state.layout = parsed.layout;
+        if (THEMES[parsed.theme]) {
+          state.theme = parsed.theme;
+          const idx = Object.keys(THEMES).indexOf(parsed.theme);
+          state.themePage = typeof parsed.themePage === "number" ? parsed.themePage : Math.floor(idx / 16);
+        }
+        if (parsed.count !== undefined) state.count = Number(parsed.count);
+        if (parsed.width !== undefined) state.width = Number(parsed.width);
+        if (parsed.columns !== undefined) state.columns = Number(parsed.columns);
+        if (parsed.index !== undefined) state.index = Number(parsed.index);
+        if (typeof parsed.thumbRatio === "string") state.thumbRatio = parsed.thumbRatio;
+        if (parsed.radius !== undefined) state.radius = Number(parsed.radius);
+        if (typeof parsed.tag === "string") state.tag = parsed.tag;
+        if (Array.isArray(parsed.tags) || parsed.tags === null) state.tags = parsed.tags;
+        if (typeof parsed.title === "string") state.title = parsed.title;
+        if (["theme", "solid", "gradient", "transparent"].includes(parsed.bgMode)) state.bgMode = parsed.bgMode;
+        if (typeof parsed.bgSolid === "string") state.bgSolid = parsed.bgSolid;
+        if (parsed.gradAngle !== undefined) state.gradAngle = Number(parsed.gradAngle);
+        if (typeof parsed.grad1 === "string") state.grad1 = parsed.grad1;
+        if (typeof parsed.grad2 === "string") state.grad2 = parsed.grad2;
+        if (typeof parsed.grad3 === "string") state.grad3 = parsed.grad3;
+        if (parsed.colors && typeof parsed.colors === "object") state.colors = parsed.colors;
+        if (parsed.flags && typeof parsed.flags === "object") state.flags = parsed.flags;
+        if (["markdown", "html", "url", "auto"].includes(parsed.codeTab)) state.codeTab = parsed.codeTab;
+        if (["light", "dark", "checker"].includes(parsed.stageBg)) state.stageBg = parsed.stageBg;
+      } catch {}
+    }
+
+    function syncControlsFromState() {
+      $("username").value = state.name;
+      $("count").value = state.count;
+      $("width").value = state.width;
+      $("columns").value = state.columns;
+      $("index").value = state.index;
+      $("radius").value = state.radius;
+      $("thumbRatio").value = state.thumbRatio;
+      $("tag").value = state.tag;
+      $("title").value = state.title;
+      $("bgSolidHex").value = state.bgSolid;
+      if (HEX.test(state.bgSolid)) $("bgSolidPicker").value = "#" + state.bgSolid.slice(0, 6);
+      $("gradAngle").value = state.gradAngle;
+      $("grad1Hex").value = state.grad1;
+      if (HEX.test(state.grad1)) $("grad1Picker").value = "#" + state.grad1.slice(0, 6);
+      $("grad2Hex").value = state.grad2;
+      if (HEX.test(state.grad2)) $("grad2Picker").value = "#" + state.grad2.slice(0, 6);
+      $("grad3Hex").value = state.grad3;
+      if (HEX.test(state.grad3)) $("grad3Picker").value = "#" + state.grad3.slice(0, 6);
+      document.querySelectorAll("[data-flag]").forEach((cb) => {
+        cb.checked = Boolean(state.flags[cb.dataset.flag]);
+      });
+      [...$("bgModeSeg").children].forEach((b) => b.classList.toggle("active", b.dataset.mode === state.bgMode));
+      [...$("codeTabSeg").children].forEach((b) => b.classList.toggle("active", b.dataset.tab === state.codeTab));
+      [...$("stageBgSeg").children].forEach((b) => b.classList.toggle("active", b.dataset.bg === state.stageBg));
+      $("stage").className = `stage bg-${state.stageBg}` + ($("stage").classList.contains("loading") ? " loading" : "");
+    }
 
     function showToast(msg) {
       const el = $("toast");
@@ -1242,6 +1314,7 @@
     function refreshPreview(immediate = false, force = false) {
       updateVisibility();
       renderCode();
+      saveState();
       const qs = buildQuery();
       const previewQs = state.flags.disable_animations ? qs : `${qs}&disable_animations=true`;
       const bust = isLocal || force ? `&_=${Date.now()}` : "";
@@ -1307,8 +1380,10 @@
     $("stageBgSeg").addEventListener("click", (e) => {
       const btn = e.target.closest("[data-bg]");
       if (!btn) return;
+      state.stageBg = btn.dataset.bg;
       [...$("stageBgSeg").children].forEach((b) => b.classList.toggle("active", b === btn));
-      $("stage").className = `stage bg-${btn.dataset.bg}` + ($("stage").classList.contains("loading") ? " loading" : "");
+      $("stage").className = `stage bg-${state.stageBg}` + ($("stage").classList.contains("loading") ? " loading" : "");
+      saveState();
     });
 
     $("codeTabSeg").addEventListener("click", (e) => {
@@ -1317,6 +1392,7 @@
       state.codeTab = btn.dataset.tab;
       [...$("codeTabSeg").children].forEach((b) => b.classList.toggle("active", b === btn));
       renderCode();
+      saveState();
     });
 
     $("colorOverrides").addEventListener("input", (e) => {
@@ -1465,22 +1541,14 @@
     $("copyCodeBtn").addEventListener("click", () => copyText($("codeOutput").textContent, "코드가 복사되었습니다"));
 
     $("resetBtn").addEventListener("click", () => {
+      try { localStorage.removeItem(STORAGE_KEY); } catch {}
       Object.assign(state, {
         name: "velopert", layout: "list", theme: "light", themePage: 0, count: 5, width: 495, columns: 2,
         index: 0, thumbRatio: "0.52", radius: 10, tag: "", tags: null, title: "", bgMode: "theme",
-        colors: {}, flags: {},
+        bgSolid: "ffffff", gradAngle: 135, grad1: "ff6b6b", grad2: "845ef7", grad3: "",
+        colors: {}, flags: {}, codeTab: "markdown", stageBg: "light",
       });
-      $("username").value = "velopert";
-      $("count").value = 5;
-      $("width").value = 495;
-      $("columns").value = 2;
-      $("index").value = 0;
-      $("radius").value = 10;
-      $("thumbRatio").value = "0.52";
-      $("tag").value = "";
-      $("title").value = "";
-      document.querySelectorAll("[data-flag]").forEach((cb) => { cb.checked = false; });
-      [...$("bgModeSeg").children].forEach((b) => b.classList.toggle("active", b.dataset.mode === "theme"));
+      syncControlsFromState();
       renderLayoutButtons();
       renderThemeButtons();
       syncOverrideInputs();
@@ -1489,10 +1557,12 @@
       showToast("설정이 초기화되었습니다");
     });
 
+    restoreState();
+    syncControlsFromState();
     renderLayoutButtons();
     renderThemeButtons();
     syncOverrideInputs();
-    loadUserTags("velopert");
+    loadUserTags(state.name);
     refreshPreview(true);
   </script>
 </body>
