@@ -42,14 +42,23 @@ async function gql(query, variables) {
   return json.data;
 }
 
+function toBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 8192) {
+    bin += String.fromCharCode(...bytes.subarray(i, i + 8192));
+  }
+  return btoa(bin);
+}
+
 async function download(url, maxBytes) {
   const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT) });
   if (!res.ok) return null;
   const type = (res.headers.get("content-type") || "").split(";")[0];
   if (!type.startsWith("image/")) return null;
-  const buf = Buffer.from(await res.arrayBuffer());
-  if (buf.length > maxBytes) return null;
-  return `data:${type};base64,${buf.toString("base64")}`;
+  const buf = await res.arrayBuffer();
+  if (buf.byteLength > maxBytes) return null;
+  return `data:${type};base64,${toBase64(buf)}`;
 }
 
 export async function toDataUri(url, { w = 400, h = 0 } = {}) {
