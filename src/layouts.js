@@ -50,7 +50,7 @@ export function list(data, opts) {
       link(
         p.url,
         fade(
-          120 + i * 50,
+          320 + i * 130,
           div +
             `<rect x="${pad}" y="${top + 6}" width="3" height="26" rx="1.5" fill="${t.accent}"/>` +
             centeredText(pad + 12, top + 12, "post", truncate(p.title, inner - 14 - r.width - 14, 13)) +
@@ -91,7 +91,7 @@ export function thumbnailList(data, opts) {
       link(
         p.url,
         fade(
-          120 + i * 50,
+          320 + i * 130,
           div +
             thumbnail(ctx, p.thumbnail, pad, top, tw, th, 7, { border: true }) +
             centeredText(x, descOrTag ? top + 10 : top + 16, "post", truncate(p.title, w, 13)) +
@@ -163,7 +163,7 @@ export function grid(data, opts) {
     const lw = measureText(lk, 11);
     const lx = x + cw - ip - lw;
     s += icon("heart", lx - 16, fy - 6, t.title, 12) + centeredText(lx, fy, "meta", lk, `fill="${t.title}" style="fill:${t.title};font-weight:600"`);
-    parts.push(link(p.url, fade(100 + i * 70, s)));
+    parts.push(link(p.url, fade(240 + i * 160, s)));
   });
 
   const rows = Math.ceil(data.posts.length / cols);
@@ -229,7 +229,7 @@ export function featured(data, opts) {
   y += 18;
   const r2 = reactions(ctx, p, width - pad, y, 13);
   s += centeredText(pad, y, "meta", dateLine(p)) + r2.svg;
-  parts.push(link(p.url, fade(80, s)));
+  parts.push(link(p.url, fade(220, s)));
   y += pad - 6;
   return frame(ctx, data, y, parts.join(""));
 }
@@ -261,7 +261,7 @@ export function compact(data, opts) {
         link(
           p.url,
           fade(
-            100,
+            240,
             pill(pad, y, lw, 22, t.chipBg, "chip", label) +
               centeredText(pad + lw + 10, cy, "post", truncate(p.title, width - pad * 2 - lw - dw - 22, 13)) +
               centeredText(width - pad, cy, "meta", dl, 'text-anchor="end"'),
@@ -286,7 +286,7 @@ export function compact(data, opts) {
           link(
             p.url,
             fade(
-              100 + i * 40,
+              240 + i * 110,
               pill(pad, top + 1, pw, 20, t.chipBg, "chip", num) +
                 centeredText(pad + pw + 10, cy, "post", truncate(p.title, width - pad * 2 - pw - dw - 22, 13)) +
                 centeredText(width - pad, cy, "meta", dl, 'text-anchor="end"'),

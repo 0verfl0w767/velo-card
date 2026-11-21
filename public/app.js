@@ -422,9 +422,8 @@ function refreshPreview(immediate = false, force = false) {
   renderCode();
   saveState();
   const qs = buildQuery();
-  const previewQs = state.flags.disable_animations ? qs : `${qs}&disable_animations=true`;
   const bust = isLocal || force ? `&_=${Date.now()}` : "";
-  const localUrl = `${location.origin}/api?${previewQs}${bust}`;
+  const localUrl = `${location.origin}/api?${qs}${bust}`;
   clearTimeout(loadTimer);
   const run = () => {
     if (!force && qs === lastPreviewUrl) return;

@@ -139,7 +139,7 @@ export function statsRow(ctx, data, y) {
     }
     curY += 20;
   }
-  return { svg: fade(80, row), height: curY - y };
+  return { svg: fade(160, row), height: curY - y };
 }
 
 export function reactions(ctx, p, right, cy, size = 12) {
@@ -170,9 +170,10 @@ export function dateLine(p) {
 
 export const sectionTitle = (ctx, y, label) => {
   const { t, width, pad } = ctx;
-  return (
+  return fade(
+    240,
     `<line x1="${pad}" y1="${y}" x2="${width - pad}" y2="${y}" stroke="${t.border}"/>` +
-    centeredText(pad, y + 20, "section", label)
+      centeredText(pad, y + 20, "section", label),
   );
 };
 
@@ -211,8 +212,8 @@ export function frame(ctx, data, height, body) {
     .desc { font-size: 12px; fill: ${t.text}; }
     .meta { font-size: 11px; fill: ${t.muted}; }
     .by { font-size: 11px; fill: ${t.muted}; }
-    .fade { opacity: 0; animation: fadeIn .32s ease-out forwards; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .fade { opacity: 0; animation: fadeIn .75s cubic-bezier(.22, 1, .36, 1) forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     ${opts.disableAnimations ? ".fade { animation: none; opacity: 1; }" : "@media (prefers-reduced-motion: reduce) { .fade { animation: none; opacity: 1; } }"}
   </style>
   ${background(t, width, h, opts.radius, opts.hideBorder)}
