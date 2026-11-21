@@ -98,10 +98,22 @@ export function profileHeader(ctx, data, y, size = "lg") {
     if (bio) svg += centeredText(textX, y + 48, "bio", bio);
   } else {
     svg += centeredText(textX, y + 11, "name-sm", truncate(data.displayName, textW, 15));
-    const subText = opts.hideFollow
-      ? `@${data.username} · 게시글 ${kFormat(data.postsCount)}`
-      : `@${data.username} · 게시글 ${kFormat(data.postsCount)} · 팔로워 ${kFormat(data.followers)} · 팔로잉 ${kFormat(data.followings)}`;
-    svg += centeredText(textX, y + 29, "sub", truncate(subText, textW, 12));
+    if (opts.hideStats) {
+      svg += centeredText(textX, y + 29, "sub", truncate(`@${data.username}`, textW, 12));
+    } else {
+      const prefix = opts.hideFollow
+        ? `@${data.username} · 게시글 ${kFormat(data.postsCount)}`
+        : `@${data.username} · 게시글 ${kFormat(data.postsCount)} · 팔로워 ${kFormat(data.followers)} · 팔로잉 ${kFormat(data.followings)}`;
+      const sep = " ·";
+      const likesStr = kFormat(data.recentLikes ?? 0);
+      const heartW = 12;
+      const rightReserve = measureText(sep, 12) + 4 + heartW + 4 + measureText(likesStr, 12);
+      const clipped = truncate(prefix, Math.max(80, textW - rightReserve), 12);
+      const heartX = textX + measureText(clipped + sep, 12) + 4;
+      svg += centeredText(textX, y + 29, "sub", clipped + sep);
+      svg += icon("heart", heartX, y + 23, t.accent, heartW);
+      svg += centeredText(heartX + heartW + 4, y + 29, "sub", likesStr);
+    }
   }
   svg += velogLogo(width - pad - 24, y, 24, logoColor(t));
   const height = lg ? Math.max(showAvatar ? av : 0, bio ? 56 : 40) : Math.max(showAvatar ? av : 0, 38);
@@ -116,10 +128,9 @@ export function statsRow(ctx, data, y) {
   if (!opts.hideStats) {
     let x = pad;
     const cy = curY + 10;
-    const totalLikes = data.posts.reduce((s, p) => s + p.likes, 0);
     const stats = [["post", `게시글 ${kFormat(data.postsCount)}`]];
     if (!opts.hideFollow) stats.push(["users", `팔로워 ${kFormat(data.followers)} · 팔로잉 ${kFormat(data.followings)}`]);
-    if (data.posts.length) stats.push(["heart", `최근 좋아요 ${kFormat(totalLikes)}`]);
+    stats.push(["heart", `최근 좋아요 ${kFormat(data.recentLikes ?? 0)}`]);
     for (const [ic, label] of stats) {
       row += icon(ic, x, cy - 6.5, t.accent, 13) + centeredText(x + 18, cy, "stat", label);
       x += 18 + measureText(label, 12) + 16;

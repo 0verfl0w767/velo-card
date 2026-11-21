@@ -229,11 +229,9 @@ function getDisabledFlags() {
   const off = new Set();
   if (l === "compact" && cnt === 0) off.add("hide_profile");
   if (hp && l !== "grid") off.add("hide_avatar");
-  if (hp || !hasStatsRow) {
-    off.add("hide_bio");
-    off.add("hide_stats");
-  }
-  if (hp || (hasStatsRow && hs)) off.add("hide_follow");
+  if (hp || !hasStatsRow) off.add("hide_bio");
+  if (hp) off.add("hide_stats");
+  if (hp || hs) off.add("hide_follow");
   if (
     l === "grid" ||
     (l === "compact" && hp) ||

@@ -12,7 +12,7 @@ export default {
     if (!isApi) return env.ASSETS.fetch(request);
 
     const cache = typeof caches !== "undefined" ? caches.default : null;
-    const cacheKey = new Request(`${url.origin}/__v2${url.pathname}${url.search}`, { method: "GET" });
+    const cacheKey = new Request(`${url.origin}/__v3${url.pathname}${url.search}`, { method: "GET" });
     if (cache && request.method === "GET") {
       const cached = await cache.match(cacheKey);
       if (cached) return cached;

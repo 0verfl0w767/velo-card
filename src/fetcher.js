@@ -19,6 +19,9 @@ query VeloCard($username: String!, $limit: Int, $tag: String) {
     thumbnail
     short_description
   }
+  recentLikes: posts(input: { username: $username, limit: 100 }) {
+    likes
+  }
   userTags(input: { username: $username }) {
     posts_count
     tags { name posts_count }
@@ -108,6 +111,7 @@ export async function fetchVelog(username, { limit = 5, offset = 0, tag = null, 
 
   const { user, userTags } = data;
   const posts = (data.posts || []).slice(offset, offset + limit);
+  const recentLikes = (data.recentLikes || []).reduce((s, p) => s + (p.likes ?? 0), 0);
 
   const [avatarUri, ...thumbs] = await Promise.all([
     avatar ? toDataUri(user.profile?.thumbnail, { w: 64, h: 64 }) : null,
@@ -122,6 +126,7 @@ export async function fetchVelog(username, { limit = 5, offset = 0, tag = null, 
     avatar: avatarUri,
     followers: user.followers_count ?? 0,
     followings: user.followings_count ?? 0,
+    recentLikes,
     postsCount: userTags?.posts_count ?? posts.length,
     topTags: (userTags?.tags || []).slice(0, 6),
     allTags: (userTags?.tags || []).slice(0, 30).map((t) => ({ name: t.name, count: t.posts_count })),
