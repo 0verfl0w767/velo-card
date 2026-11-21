@@ -1,0 +1,20 @@
+{
+  "functions": {
+    "api/*.js": {
+      "memory": 256,
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [{ "type": "query", "key": "name" }],
+      "destination": "/api"
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "query", "key": "username" }],
+      "destination": "/api"
+    }
+  ]
+}
