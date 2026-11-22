@@ -290,7 +290,8 @@ function updateVisibility() {
     cb.closest(".toggle").classList.toggle("disabled", disabled);
     if (!disabled && cb.checked) activeFlags++;
   });
-  $("activeFlagCount").textContent = activeFlags ? `${activeFlags}개 적용됨` : "";
+  $("activeFlagCount").textContent = activeFlags ? `${activeFlags}개 숨김` : "기본";
+  $("activeFlagCount").classList.toggle("active", activeFlags > 0);
 
   const hp = Boolean(state.flags.hide_profile) && !noPosts;
   const tagsDisabled = l === "grid" || l === "featured" || hp || Boolean(state.flags.hide_tags);
@@ -303,6 +304,32 @@ function updateVisibility() {
       : state.flags.hide_tags
       ? "태그 숨김이 켜져 있음"
       : "클릭해서 추가 / 제외";
+
+  const tagCount = state.tags !== null ? state.tags.length : Math.min(6, state.allTags.length);
+  $("tagSummary").textContent = tagsDisabled ? "미사용" : state.tags === null ? `기본 ${tagCount}개` : `${tagCount}개`;
+  $("tagSummary").classList.toggle("active", !tagsDisabled && state.tags !== null);
+
+  const layoutLabel = (LAYOUTS[l] || LAYOUTS.list).label;
+  $("layoutSummary").textContent =
+    l === "featured"
+      ? layoutLabel
+      : noPosts
+      ? `${layoutLabel} · 프로필만`
+      : `${layoutLabel} · ${cnt}개`;
+  $("layoutSummary").classList.toggle(
+    "active",
+    l !== "list" || cnt !== 5 || Number(state.width) !== 495 || Number(state.radius) !== 10 || Number(state.index) !== 0,
+  );
+
+  $("themeSummary").textContent =
+    state.bgMode === "solid"
+      ? `단색 #${state.bgSolid}`
+      : state.bgMode === "gradient"
+      ? "그라데이션"
+      : state.bgMode === "transparent"
+      ? "투명"
+      : state.theme;
+  $("themeSummary").classList.toggle("active", state.theme !== "light" || state.bgMode !== "theme");
 }
 
 function renderProfileTags() {
@@ -331,6 +358,7 @@ async function loadUserTags(username) {
     const json = await res.json();
     state.allTags = json.tags || [];
     renderProfileTags();
+    updateVisibility();
   } catch {}
 }
 
@@ -660,8 +688,18 @@ $("resetBtn").addEventListener("click", () => {
   showToast("설정이 초기화되었습니다");
 });
 
+function applyAccordionDefaults(isMobile) {
+  ["layoutPanel", "tagPanel", "themePanel", "flagsPanel"].forEach((id) => {
+    $(id).open = !isMobile;
+  });
+}
+
+const mobileQuery = window.matchMedia("(max-width: 1024px)");
+mobileQuery.addEventListener("change", (e) => applyAccordionDefaults(e.matches));
+
 restoreState();
 syncControlsFromState();
+applyAccordionDefaults(mobileQuery.matches);
 renderLayoutButtons();
 renderThemeButtons();
 syncOverrideInputs();
