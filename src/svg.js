@@ -205,7 +205,10 @@ function background(t, width, height, radius, hideBorder) {
 export function frame(ctx, data, height, body) {
   const { t, width, opts } = ctx;
   const h = Math.ceil(height);
-  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${width}" height="${h}" viewBox="0 0 ${width} ${h}" role="img" aria-label="${escapeXml(data.displayName)}님의 velog 카드">
+  const scale = opts.scale ?? 1;
+  const outW = Math.round(width * scale);
+  const outH = Math.round(h * scale);
+  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${outW}" height="${outH}" viewBox="0 0 ${width} ${h}" role="img" aria-label="${escapeXml(data.displayName)}님의 velog 카드">
   <title>${escapeXml(data.displayName)} · velog</title>
   <style>
     text { font-family: ${FONT}; }

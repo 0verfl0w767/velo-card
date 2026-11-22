@@ -13,11 +13,16 @@ export function parseOptions(q = {}) {
   if (layoutName === "featured") count = 1;
 
   const ratio = RATIOS[q.thumb_ratio] ?? (parseFloat(q.thumb_ratio) > 0 ? Math.min(1.2, Math.max(0.3, parseFloat(q.thumb_ratio))) : 0.52);
+  const rawScale = parseFloat(q.scale);
+  const scale = Number.isFinite(rawScale) && rawScale > 0
+    ? Math.round(Math.min(2, Math.max(0.7, rawScale)) * 100) / 100
+    : 1.2;
 
   const opts = {
     layout: layoutName,
     theme: resolveTheme(q.theme, q),
     width,
+    scale,
     count,
     index,
     columns: clampInt(q.columns, 1, 4, Math.min(2, Math.max(count, 1))),

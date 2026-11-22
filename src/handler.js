@@ -38,7 +38,7 @@ export async function handleApiRequest(url, { noCache = false } = {}) {
     return {
       status: 400,
       headers,
-      body: renderError('유효한 "name" 파라미터가 필요합니다. 예: ?name=velopert', opts.theme, opts.width),
+      body: renderError('유효한 "name" 파라미터가 필요합니다. 예: ?name=velopert', opts.theme, opts.width, opts.scale),
     };
   }
 
@@ -61,7 +61,7 @@ export async function handleApiRequest(url, { noCache = false } = {}) {
     return {
       status: err instanceof NotFoundError ? 404 : 500,
       headers,
-      body: renderError(err.message, opts.theme, opts.width),
+      body: renderError(err.message, opts.theme, opts.width, opts.scale),
     };
   }
 }
