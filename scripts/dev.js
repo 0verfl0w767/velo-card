@@ -28,6 +28,7 @@ http
     if (file.startsWith(PUBLIC_DIR + path.sep) && fs.existsSync(file) && fs.statSync(file).isFile()) {
       const ext = path.extname(file).toLowerCase();
       res.setHeader("Content-Type", MIME[ext] || "application/octet-stream");
+      res.setHeader("Cache-Control", "no-store");
       res.statusCode = 200;
       return res.end(fs.readFileSync(file));
     }
