@@ -64,6 +64,7 @@ const state = {
   themePage: 0,
   count: 5,
   width: 495,
+  scale: 1.2,
   columns: 2,
   index: 0,
   thumbRatio: "0.52",
@@ -111,6 +112,7 @@ function restoreState() {
     }
     if (parsed.count !== undefined) state.count = Number(parsed.count);
     if (parsed.width !== undefined) state.width = Number(parsed.width);
+    if (parsed.scale !== undefined) state.scale = Math.min(2, Math.max(0.7, Number(parsed.scale) || 1.2));
     if (parsed.columns !== undefined) state.columns = Number(parsed.columns);
     if (parsed.index !== undefined) state.index = Number(parsed.index);
     if (typeof parsed.thumbRatio === "string") state.thumbRatio = parsed.thumbRatio;
@@ -135,6 +137,7 @@ function syncControlsFromState() {
   $("username").value = state.name;
   $("count").value = state.count;
   $("width").value = state.width;
+  $("scale").value = state.scale;
   $("columns").value = state.columns;
   $("index").value = state.index;
   $("radius").value = state.radius;
@@ -277,6 +280,7 @@ function updateVisibility() {
     : "기본: 최근 게시글";
   $("countVal").textContent = state.count;
   $("widthVal").textContent = state.width;
+  $("scaleVal").textContent = `${Number(state.scale)}x`;
   $("columnsVal").textContent = state.columns;
   $("indexVal").textContent = state.index;
   $("radiusVal").textContent = state.radius;
@@ -310,15 +314,15 @@ function updateVisibility() {
   $("tagSummary").classList.toggle("active", !tagsDisabled && state.tags !== null);
 
   const layoutLabel = (LAYOUTS[l] || LAYOUTS.list).label;
-  $("layoutSummary").textContent =
-    l === "featured"
-      ? layoutLabel
-      : noPosts
-      ? `${layoutLabel} · 프로필만`
-      : `${layoutLabel} · ${cnt}개`;
+  const scaleDiff = Math.abs(Number(state.scale) - 1.2) > 0.001;
+  const layoutParts = [layoutLabel];
+  if (noPosts) layoutParts.push("프로필만");
+  else if (l !== "featured") layoutParts.push(`${cnt}개`);
+  if (scaleDiff) layoutParts.push(`${Number(state.scale)}x`);
+  $("layoutSummary").textContent = layoutParts.join(" · ");
   $("layoutSummary").classList.toggle(
     "active",
-    l !== "list" || cnt !== 5 || Number(state.width) !== 495 || Number(state.radius) !== 10 || Number(state.index) !== 0,
+    l !== "list" || cnt !== 5 || Number(state.width) !== 495 || scaleDiff || Number(state.radius) !== 10 || Number(state.index) !== 0,
   );
 
   $("themeSummary").textContent =
@@ -377,6 +381,7 @@ function buildQuery(extra = {}) {
     p.set("count", state.count);
   }
   if (Number(state.width) !== layoutDef.width) p.set("width", state.width);
+  if (Math.abs(Number(state.scale) - 1.2) > 0.001) p.set("scale", String(Number(state.scale)));
   if (state.layout === "grid" && Number(state.count) > 1 && Number(state.columns) !== Math.min(2, Math.max(Number(state.count), 1))) {
     p.set("columns", state.columns);
   }
@@ -591,6 +596,7 @@ function bindRange(id, stateKey) {
 bindRange("gradAngle", "gradAngle");
 bindRange("count", "count");
 bindRange("width", "width");
+bindRange("scale", "scale");
 bindRange("columns", "columns");
 bindRange("index", "index");
 bindRange("radius", "radius");
@@ -674,7 +680,7 @@ $("copyCodeBtn").addEventListener("click", () => copyText($("codeOutput").textCo
 $("resetBtn").addEventListener("click", () => {
   try { localStorage.removeItem(STORAGE_KEY); } catch {}
   Object.assign(state, {
-    name: "velopert", layout: "list", theme: "light", themePage: 0, count: 5, width: 495, columns: 2,
+    name: "velopert", layout: "list", theme: "light", themePage: 0, count: 5, width: 495, scale: 1.2, columns: 2,
     index: 0, thumbRatio: "0.52", radius: 10, tag: "", tags: null, title: "", bgMode: "theme",
     bgSolid: "ffffff", gradAngle: 135, grad1: "ff6b6b", grad2: "845ef7", grad3: "",
     colors: {}, flags: {}, codeTab: "markdown", stageBg: "light",
