@@ -3,7 +3,57 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>velo-card 생성기</title>
+  <title>velo-card | velog 프로필 카드 생성기</title>
+  <meta name="description" content="velog 아이디만 입력하면 프로필, 통계, 태그, 최근 게시글을 깔끔한 SVG 카드로 만들어 주는 생성기입니다. 5가지 레이아웃과 38종 테마를 지원해 블로그·포트폴리오·GitHub 등 어디든 붙일 수 있습니다." />
+  <meta name="keywords" content="velo-card, velog 프로필 카드 생성기, velog 카드, 벨로그 프로필 카드, 벨로그 위젯, velog SVG 카드, GitHub README velog" />
+  <meta name="author" content="0verfl0w767" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#12b886" />
+  <link rel="canonical" href="https://velo-card.profilecard.workers.dev/" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+  <link rel="manifest" href="./site.webmanifest" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:site_name" content="velo-card" />
+  <meta property="og:title" content="velo-card | velog 프로필 카드 생성기" />
+  <meta property="og:description" content="velog 아이디만 입력하면 프로필과 최근 게시글을 실시간 SVG 카드로 생성합니다. 5가지 레이아웃, 38종 테마, 커스텀 색상 지원." />
+  <meta property="og:url" content="https://velo-card.profilecard.workers.dev/" />
+  <meta property="og:image" content="https://velo-card.profilecard.workers.dev/og-image.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1376" />
+  <meta property="og:image:height" content="768" />
+  <meta property="og:image:alt" content="velo-card velog 프로필 카드 미리보기" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="velo-card | velog 프로필 카드 생성기" />
+  <meta name="twitter:description" content="velog 아이디만 입력하면 프로필과 최근 게시글을 실시간 SVG 카드로 생성해 주는 생성기입니다." />
+  <meta name="twitter:image" content="https://velo-card.profilecard.workers.dev/og-image.jpg" />
+  <meta name="twitter:image:alt" content="velo-card velog 프로필 카드 미리보기" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "velo-card",
+    "alternateName": "velog 프로필 카드 생성기",
+    "url": "https://velo-card.profilecard.workers.dev/",
+    "description": "velog 아이디만 입력하면 프로필, 통계, 태그, 최근 게시글을 실시간 SVG 카드로 만들어 주는 생성기입니다.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "ko",
+    "image": "https://velo-card.profilecard.workers.dev/og-image.jpg",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "KRW"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "0verfl0w767",
+      "url": "https://github.com/0verfl0w767"
+    }
+  }
+  </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <link rel="stylesheet" href="./style.css?v=2" />
 </head>
@@ -11,9 +61,25 @@
   <header>
     <div class="topbar">
       <div class="brand">
-        <svg width="24" height="24" viewBox="0 0 192 192" aria-hidden="true">
-          <rect width="192" height="192" rx="34" fill="#20c997"/>
-          <path fill="#fff" d="M49 65.4v-6.4c7.2-1.4 17.6-2.3 25.3-2.3 6.5 0 8.9 3 8.9 8.4l-0.5 40.6c13.7-15.6 22-31.1 22-43.5 0-4-1-6.7-3.6-9.2 7.5-1.8 13.6-2.6 19.6-2.6 6.1 0 10.2 3 10.2 10.2 0 21.3-21.6 51.2-51.7 74.7-6.5 0-13.2 0.1-19.9 0.2l1.2-63.8c0-4.6-1.2-6.3-11.5-6.3z"/>
+        <svg width="26" height="26" viewBox="0 0 192 192" aria-hidden="true">
+          <defs>
+            <linearGradient id="brandBg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#0ca678"/>
+              <stop offset="100%" stop-color="#20c997"/>
+            </linearGradient>
+            <linearGradient id="brandV" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#099268"/>
+              <stop offset="100%" stop-color="#20c997"/>
+            </linearGradient>
+          </defs>
+          <rect width="192" height="192" rx="44" fill="url(#brandBg)"/>
+          <rect x="48" y="26" width="114" height="116" rx="22" fill="#ffffff" fill-opacity="0.28"/>
+          <rect x="30" y="44" width="122" height="120" rx="22" fill="#ffffff"/>
+          <path fill="url(#brandV)" d="M46 69.5 L46 66 C49.8 65.1, 55.2 64.6, 59.3 64.6 C62.9 64.6, 64.5 66.3, 64.6 69.5 L65.5 89.2 C72 81.5, 76.6 73.3, 76.8 67.4 C76.8 65.4, 76.1 63.9, 74.9 62.8 C78.6 61.9, 81.8 61.5, 84.8 61.5 C88.1 61.5, 90 63.4, 90 67.3 C90 77.8, 79.4 92.6, 64.9 103.3 C61.5 103.5, 57.9 103.5, 54.3 103.5 L52.9 72.7 C52.8 70.4, 51.6 69.5, 46 69.5 Z"/>
+          <rect x="97" y="68" width="40" height="10" rx="5" fill="#191f28" fill-opacity="0.85"/>
+          <rect x="97" y="84" width="28" height="7" rx="3.5" fill="#8b95a1" fill-opacity="0.75"/>
+          <rect x="46" y="116" width="91" height="11" rx="5.5" fill="#12b886"/>
+          <rect x="46" y="135" width="64" height="11" rx="5.5" fill="#20c997" fill-opacity="0.5"/>
         </svg>
         <span>velo-card</span>
       </div>

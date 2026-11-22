@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /api
+Sitemap: https://velo-card.profilecard.workers.dev/sitemap.xml
