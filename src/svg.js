@@ -111,7 +111,7 @@ export function profileHeader(ctx, data, y, size = "lg") {
       const clipped = truncate(prefix, Math.max(80, textW - rightReserve), 12);
       const heartX = textX + measureText(clipped, 12) + gap;
       svg += centeredText(textX, y + 29, "sub", clipped);
-      svg += icon("heart", heartX, y + 22, t.accent, heartW);
+      svg += icon("heart", heartX, y + 24, t.accent, heartW);
       svg += centeredText(heartX + heartW + 4, y + 29, "sub", likesStr);
     }
   }
