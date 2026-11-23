@@ -104,14 +104,14 @@ export function profileHeader(ctx, data, y, size = "lg") {
       const prefix = opts.hideFollow
         ? `@${data.username} · 게시글 ${kFormat(data.postsCount)}`
         : `@${data.username} · 게시글 ${kFormat(data.postsCount)} · 팔로워 ${kFormat(data.followers)} · 팔로잉 ${kFormat(data.followings)}`;
-      const sep = " ·";
       const likesStr = kFormat(data.recentLikes ?? 0);
       const heartW = 12;
-      const rightReserve = measureText(sep, 12) + 4 + heartW + 4 + measureText(likesStr, 12);
+      const gap = 14;
+      const rightReserve = gap + heartW + 4 + measureText(likesStr, 12);
       const clipped = truncate(prefix, Math.max(80, textW - rightReserve), 12);
-      const heartX = textX + measureText(clipped + sep, 12) + 4;
-      svg += centeredText(textX, y + 29, "sub", clipped + sep);
-      svg += icon("heart", heartX, y + 23, t.accent, heartW);
+      const heartX = textX + measureText(clipped, 12) + gap;
+      svg += centeredText(textX, y + 29, "sub", clipped);
+      svg += icon("heart", heartX, y + 22, t.accent, heartW);
       svg += centeredText(heartX + heartW + 4, y + 29, "sub", likesStr);
     }
   }
