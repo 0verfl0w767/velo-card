@@ -9,8 +9,7 @@ export function parseOptions(q = {}) {
   const layout = layouts[layoutName];
   const index = clampInt(q.index, 0, 20, 0);
   const width = clampInt(q.width, 300, 1000, layout.width);
-  let count = clampInt(q.count, 0, 10, layout.count);
-  if (layoutName === "featured") count = 1;
+  const count = clampInt(q.count, 0, 10, layout.count);
 
   const ratio = RATIOS[q.thumb_ratio] ?? (parseFloat(q.thumb_ratio) > 0 ? Math.min(1.2, Math.max(0.3, parseFloat(q.thumb_ratio))) : 0.52);
   const rawScale = parseFloat(q.scale);

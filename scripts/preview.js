@@ -17,7 +17,6 @@ const samples = {
   grid: { layout: "grid" },
   "grid-dark": { layout: "grid", theme: "github_dark", count: "2", hide_profile: "true" },
   "grid-3": { layout: "grid", theme: "tokyonight", count: "3", columns: "3", width: "800" },
-  featured: { layout: "featured", theme: "sunset" },
   compact: { layout: "compact", theme: "nord" },
   custom: { layout: "thumbnail", bg_color: "135,0f2027,2c5364", title_color: "ffffff", text_color: "dfe6e9", muted_color: "b2bec3", accent_color: "fdcb6e", border_color: "00000000", surface_color: "ffffff14", chip_color: "ffffff1f", chip_text_color: "fdcb6e" },
 };

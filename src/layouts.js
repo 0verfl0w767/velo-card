@@ -6,13 +6,6 @@ import {
 
 const link = (url, inner) => `<a href="${escapeXml(url)}" target="_blank">${inner}</a>`;
 
-function contrast(hex) {
-  let h = hex.replace("#", "");
-  if (h.length <= 4) h = [...h].map((c) => c + c).join("");
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
-  return 0.299 * r + 0.587 * g + 0.114 * b > 160 ? "#1a1a1a" : "#ffffff";
-}
-
 const empty = (ctx, y) => centeredText(ctx.pad, y + 14, "meta", "아직 작성한 게시글이 없습니다.");
 
 function topSection(ctx, data, parts) {
@@ -171,69 +164,6 @@ export function grid(data, opts) {
   return frame(ctx, data, y, parts.join(""));
 }
 
-export function featured(data, opts) {
-  const ctx = createCtx(opts.theme, opts.width, opts);
-  const { t, width, pad } = ctx;
-  const inner = width - pad * 2;
-  const parts = [];
-  let y = pad;
-  if (!opts.hideProfile) {
-    const h = profileHeader(ctx, data, y, "sm");
-    parts.push(h.svg);
-    y += h.height + 16;
-  }
-  const p = data.posts[0];
-  if (!p) {
-    parts.push(empty(ctx, y - 4));
-    return frame(ctx, data, y + 32, parts.join(""));
-  }
-
-  const th = Math.round(inner * opts.thumbRatio);
-  const r = Math.min(opts.radius, 14);
-  let s = thumbnail(ctx, p.thumbnail, pad, y, inner, th, r, { border: true });
-  const label = opts.title || (opts.index ? "게시글" : "최신 글");
-  const lw = Math.round(measureText(label, 11) + 20);
-  const badgeBg = t.accent.toLowerCase() === "#ffffff" ? "#12b886" : t.accent;
-  s += pill(pad + 12, y + 12, lw, 22, badgeBg, "pill", label, contrast(badgeBg));
-  y += th + 24;
-
-  const titleLines = wrapText(p.title, inner, 17, 2);
-  titleLines.forEach((line, i) => {
-    s += centeredText(pad, y + i * 24, "post-lg", line);
-  });
-  y += (titleLines.length - 1) * 24 + 20;
-
-  if (!opts.hideDescription) {
-    const lines = wrapText(p.description, inner, 12, 3);
-    lines.forEach((line, i) => {
-      s += centeredText(pad, y + 4 + i * 18, "desc", line);
-    });
-    y += lines.length * 18 + 10;
-  }
-
-  if (p.tags.length && !opts.hideTags) {
-    y += 4;
-    let x = pad;
-    for (const tag of p.tags) {
-      const w = Math.round(measureText(tag, 11) + 20);
-      if (x + w > width - pad) break;
-      s += pill(x, y, w, 22, t.chipBg, "chip", tag);
-      x += w + 6;
-    }
-    y += 30;
-  } else {
-    y += 4;
-  }
-
-  s += `<line x1="${pad}" y1="${y}" x2="${width - pad}" y2="${y}" stroke="${t.border}"/>`;
-  y += 18;
-  const r2 = reactions(ctx, p, width - pad, y, 13);
-  s += centeredText(pad, y, "meta", dateLine(p)) + r2.svg;
-  parts.push(link(p.url, fade(220, s)));
-  y += pad - 6;
-  return frame(ctx, data, y, parts.join(""));
-}
-
 export function compact(data, opts) {
   const showProfile = !(opts.hideProfile && data.posts.length);
   const ctx = createCtx(opts.theme, opts.width, { ...opts, hideProfile: !showProfile });
@@ -313,12 +243,6 @@ export const layouts = {
       const w = Math.round((o.width - 48 - 16 * (cols - 1)) / cols);
       return { w, h: Math.round(w * o.thumbRatio) };
     },
-  },
-  featured: {
-    render: featured,
-    width: 495,
-    count: 1,
-    thumbs: (o) => ({ w: o.width - 48, h: Math.round((o.width - 48) * o.thumbRatio) }),
   },
   compact: { render: compact, width: 495, count: 0, thumbs: null },
 };

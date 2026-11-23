@@ -2,7 +2,6 @@ const LAYOUTS = {
   list: { label: "목록", width: 495, count: 5, icon: `<rect x="2" y="3" width="24" height="5" rx="1.5"/><rect x="2" y="10" width="24" height="3" rx="1"/><rect x="2" y="15" width="24" height="3" rx="1"/><rect x="2" y="20" width="18" height="3" rx="1"/>` },
   thumbnail: { label: "썸네일", width: 495, count: 4, icon: `<rect x="2" y="3" width="9" height="7" rx="1.5"/><rect x="13" y="4" width="13" height="2.5" rx="1"/><rect x="13" y="8" width="9" height="2" rx="1"/><rect x="2" y="13" width="9" height="7" rx="1.5"/><rect x="13" y="14" width="13" height="2.5" rx="1"/><rect x="13" y="18" width="9" height="2" rx="1"/>` },
   grid: { label: "미리보기", width: 640, count: 2, icon: `<rect x="2" y="3" width="11" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3.5" y="4.5" width="8" height="6" rx="1"/><rect x="15" y="3" width="11" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="16.5" y="4.5" width="8" height="6" rx="1"/>` },
-  featured: { label: "대표 글", width: 495, count: 1, icon: `<rect x="2" y="3" width="24" height="11" rx="2"/><rect x="2" y="16" width="20" height="3" rx="1"/><rect x="2" y="21" width="14" height="2" rx="1"/>` },
   compact: { label: "한 줄 배지", width: 495, count: 0, icon: `<circle cx="6" cy="9" r="3.5"/><rect x="12" y="6.5" width="14" height="2.5" rx="1"/><rect x="12" y="10.5" width="9" height="2" rx="1"/><rect x="2" y="17" width="24" height="3.5" rx="1"/>` },
 };
 
@@ -130,14 +129,15 @@ function restoreState() {
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") return;
     if (typeof parsed.name === "string" && parsed.name.trim()) state.name = parsed.name.trim().replace(/^@/, "");
+    const validLayout = !parsed.layout || Boolean(LAYOUTS[parsed.layout]);
     if (LAYOUTS[parsed.layout]) state.layout = parsed.layout;
     if (THEMES[parsed.theme]) {
       state.theme = parsed.theme;
       const idx = Object.keys(THEMES).indexOf(parsed.theme);
       state.themePage = typeof parsed.themePage === "number" ? parsed.themePage : Math.floor(idx / 16);
     }
-    if (parsed.count !== undefined) state.count = Number(parsed.count);
-    if (parsed.width !== undefined) state.width = Number(parsed.width);
+    if (validLayout && parsed.count !== undefined) state.count = Number(parsed.count);
+    if (validLayout && parsed.width !== undefined) state.width = Number(parsed.width);
     if (parsed.scale !== undefined) state.scale = Math.min(2, Math.max(0.7, Number(parsed.scale) || 1.2));
     if (parsed.columns !== undefined) state.columns = Number(parsed.columns);
     if (parsed.index !== undefined) state.index = Number(parsed.index);
@@ -275,13 +275,12 @@ function getDisabledFlags() {
 function updateVisibility() {
   const l = state.layout;
   $("count").min = l === "compact" ? "0" : "1";
-  if (l !== "compact" && l !== "featured" && Number(state.count) < 1) {
+  if (l !== "compact" && Number(state.count) < 1) {
     state.count = 1;
     $("count").value = 1;
   }
   const cnt = Number(state.count);
   const noPosts = l === "compact" && cnt === 0;
-  $("countWrap").classList.toggle("hidden", l === "featured");
   $("columnsWrap").classList.toggle("hidden", l !== "grid" || cnt <= 1);
   if (l === "grid" && cnt > 1) {
     $("columns").max = String(Math.min(4, cnt));
@@ -290,7 +289,7 @@ function updateVisibility() {
       $("columns").value = state.columns;
     }
   }
-  $("ratioWrap").classList.toggle("hidden", l !== "grid" && l !== "featured");
+  $("ratioWrap").classList.toggle("hidden", l !== "grid");
   $("indexWrap").classList.toggle("hidden", noPosts);
   $("tag").disabled = noPosts;
   $("tag").placeholder = noPosts ? "게시글 수 1 이상에서 사용" : "특정 태그만 (예: React)";
@@ -298,10 +297,10 @@ function updateVisibility() {
   $("bgGradBox").classList.toggle("hidden", state.bgMode !== "gradient");
   const titleOff = l === "grid" || noPosts;
   $("title").disabled = titleOff;
-  $("titleLabel").textContent = l === "featured" || l === "compact" ? "배지 문구" : "목록 제목";
+  $("titleLabel").textContent = l === "compact" ? "배지 문구" : "목록 제목";
   $("title").placeholder = titleOff
     ? "이 레이아웃에선 미사용"
-    : l === "featured" || l === "compact"
+    : l === "compact"
     ? "기본: 최신 글"
     : "기본: 최근 게시글";
   $("countVal").textContent = state.count;
@@ -324,10 +323,10 @@ function updateVisibility() {
   $("activeFlagCount").classList.toggle("active", activeFlags > 0);
 
   const hp = Boolean(state.flags.hide_profile) && !noPosts;
-  const tagsDisabled = l === "grid" || l === "featured" || hp || Boolean(state.flags.hide_tags);
+  const tagsDisabled = l === "grid" || hp || Boolean(state.flags.hide_tags);
   $("tagPanel").classList.toggle("muted", tagsDisabled);
   $("tagPanelHint").textContent =
-    l === "grid" || l === "featured"
+    l === "grid"
       ? "목록·썸네일·한 줄 배지에서만 표시"
       : hp
       ? "프로필 숨김이 켜져 있음"
@@ -343,7 +342,7 @@ function updateVisibility() {
   const scaleDiff = Math.abs(Number(state.scale) - 1.2) > 0.001;
   const layoutParts = [layoutLabel];
   if (noPosts) layoutParts.push("프로필만");
-  else if (l !== "featured") layoutParts.push(`${cnt}개`);
+  else layoutParts.push(`${cnt}개`);
   if (scaleDiff) layoutParts.push(`${Number(state.scale)}x`);
   $("layoutSummary").textContent = layoutParts.join(" · ");
   $("layoutSummary").classList.toggle(
@@ -403,7 +402,7 @@ function buildQuery(extra = {}) {
   const theme = extra.theme || state.theme;
   if (theme !== "light") p.set("theme", theme);
 
-  if (state.layout !== "featured" && Number(state.count) !== layoutDef.count) {
+  if (Number(state.count) !== layoutDef.count) {
     p.set("count", state.count);
   }
   if (Number(state.width) !== layoutDef.width) p.set("width", state.width);
@@ -413,13 +412,13 @@ function buildQuery(extra = {}) {
   }
   const noPosts = state.layout === "compact" && Number(state.count) === 0;
   if (!noPosts && Number(state.index) !== 0) p.set("index", state.index);
-  if ((state.layout === "grid" || state.layout === "featured") && state.thumbRatio !== "0.52") {
+  if (state.layout === "grid" && state.thumbRatio !== "0.52") {
     p.set("thumb_ratio", state.thumbRatio);
   }
   if (Number(state.radius) !== 10) p.set("border_radius", state.radius);
   if (!noPosts && state.tag.trim()) p.set("tag", state.tag.trim());
   const hp = Boolean(state.flags.hide_profile) && !noPosts;
-  const tagsDisabled = state.layout === "grid" || state.layout === "featured" || hp || Boolean(state.flags.hide_tags);
+  const tagsDisabled = state.layout === "grid" || hp || Boolean(state.flags.hide_tags);
   if (state.tags !== null && !tagsDisabled) {
     const def = state.allTags.slice(0, 6).map((t) => t.name);
     const sameAsDefault = state.tags.length === def.length && state.tags.every((v, i) => v === def[i]);
