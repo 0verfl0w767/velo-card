@@ -20,10 +20,11 @@ function charWidth(ch) {
     (code >= 0xffe0 && code <= 0xffe6) ||
     code >= 0x1f000
   )
-    return 1;
+    return 0.95;
   if (/[A-Z]/.test(ch)) return 0.65;
   if (/[mwMW@]/.test(ch)) return 0.8;
-  if (/[iljtf.,:;'|!\s]/.test(ch)) return 0.3;
+  if (/[0-9]/.test(ch)) return 0.6;
+  if (/[iljtf.,:;'|!·\s]/.test(ch)) return 0.3;
   return 0.55;
 }
 
