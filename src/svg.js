@@ -162,7 +162,7 @@ export function profileHeader(ctx, data, y, size = "lg") {
         : `@${data.username} · 게시글 ${kFormat(data.postsCount)} · 팔로워 ${kFormat(data.followers)} · 팔로잉 ${kFormat(data.followings)}`;
       const likesStr = kFormat(data.recentLikes ?? 0);
       const heartW = 12;
-      const gap = 14;
+      const gap = 8;
       const rightReserve = gap + heartW + 4 + measureText(likesStr, 12);
       const clipped = truncate(prefix, Math.max(80, textW - rightReserve), 12);
       const heartX = textX + measureText(clipped, 12) + gap;

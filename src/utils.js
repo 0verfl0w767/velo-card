@@ -18,14 +18,15 @@ function charWidth(ch) {
     (code >= 0xfe30 && code <= 0xfe4f) ||
     (code >= 0xff00 && code <= 0xff60) ||
     (code >= 0xffe0 && code <= 0xffe6) ||
+    code === 0x2026 ||
     code >= 0x1f000
   )
-    return 0.95;
-  if (/[A-Z]/.test(ch)) return 0.65;
-  if (/[mwMW@]/.test(ch)) return 0.8;
-  if (/[0-9]/.test(ch)) return 0.6;
-  if (/[iljtf.,:;'|!·\s]/.test(ch)) return 0.3;
-  return 0.55;
+    return 1.04;
+  if (/[A-Z]/.test(ch)) return 0.72;
+  if (/[mwMW@]/.test(ch)) return 0.88;
+  if (/[0-9]/.test(ch)) return 0.62;
+  if (/[iljtf.,:;'|!·\s]/.test(ch)) return 0.35;
+  return 0.58;
 }
 
 export function measureText(str, fontSize) {
