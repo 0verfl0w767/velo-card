@@ -1,5 +1,9 @@
 # velo-card
 
+<p align="center">
+  <img src="./public/banner.gif" alt="velo-card 미리보기" width="760" />
+</p>
+
 [velog.io](https://velog.io) 사용자 이름만 넣으면 **프로필 + 게시글**을 SVG 카드로 그려주는 API입니다.
 GitHub README, 블로그 등 어디든 이미지처럼 붙여 넣을 수 있습니다.
 
