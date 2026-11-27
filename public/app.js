@@ -2,7 +2,7 @@ const LAYOUTS = {
   list: { label: "목록", width: 495, count: 5, icon: `<rect x="2" y="3" width="24" height="5" rx="1.5"/><rect x="2" y="10" width="24" height="3" rx="1"/><rect x="2" y="15" width="24" height="3" rx="1"/><rect x="2" y="20" width="18" height="3" rx="1"/>` },
   thumbnail: { label: "썸네일", width: 495, count: 4, icon: `<rect x="2" y="3" width="9" height="7" rx="1.5"/><rect x="13" y="4" width="13" height="2.5" rx="1"/><rect x="13" y="8" width="9" height="2" rx="1"/><rect x="2" y="13" width="9" height="7" rx="1.5"/><rect x="13" y="14" width="13" height="2.5" rx="1"/><rect x="13" y="18" width="9" height="2" rx="1"/>` },
   grid: { label: "미리보기", width: 640, count: 2, icon: `<rect x="2" y="3" width="11" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3.5" y="4.5" width="8" height="6" rx="1"/><rect x="15" y="3" width="11" height="19" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="16.5" y="4.5" width="8" height="6" rx="1"/>` },
-  compact: { label: "한 줄 배지", width: 495, count: 0, icon: `<circle cx="6" cy="9" r="3.5"/><rect x="12" y="6.5" width="14" height="2.5" rx="1"/><rect x="12" y="10.5" width="9" height="2" rx="1"/><rect x="2" y="17" width="24" height="3.5" rx="1"/>` },
+  compact: { label: "한 줄 뱃지", width: 495, count: 0, icon: `<circle cx="6" cy="9" r="3.5"/><rect x="12" y="6.5" width="14" height="2.5" rx="1"/><rect x="12" y="10.5" width="9" height="2" rx="1"/><rect x="2" y="17" width="24" height="3.5" rx="1"/>` },
 };
 
 const THEMES = {
@@ -297,7 +297,7 @@ function updateVisibility() {
   $("bgGradBox").classList.toggle("hidden", state.bgMode !== "gradient");
   const titleOff = l === "grid" || noPosts;
   $("title").disabled = titleOff;
-  $("titleLabel").textContent = l === "compact" ? "배지 문구" : "목록 제목";
+  $("titleLabel").textContent = l === "compact" ? "뱃지 문구" : "목록 제목";
   $("title").placeholder = titleOff
     ? "이 레이아웃에선 미사용"
     : l === "compact"
@@ -327,7 +327,7 @@ function updateVisibility() {
   $("tagPanel").classList.toggle("muted", tagsDisabled);
   $("tagPanelHint").textContent =
     l === "grid"
-      ? "목록·썸네일·한 줄 배지에서만 표시"
+      ? "목록·썸네일·한 줄 뱃지에서만 표시"
       : hp
       ? "프로필 숨김이 켜져 있음"
       : state.flags.hide_tags
