@@ -241,7 +241,7 @@ function renderThemeButtons() {
         : v.bg;
       return `
         <button type="button" class="theme-btn${state.theme === k ? " active" : ""}" data-theme="${k}" title="${k}">
-          <span class="swatch" style="background:${bg}"><span class="swatch-dot" style="background:${v.accent}"></span></span>
+          <span class="swatch" style="background:${bg}"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="${v.accent}"/></svg></span>
           <span class="t-name">${k}</span>
         </button>`;
     })
