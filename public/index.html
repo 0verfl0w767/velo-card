@@ -55,7 +55,7 @@
   }
   </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="./style.css?v=2" />
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <header>
@@ -92,13 +92,18 @@
       <section class="panel" id="basicPanel">
         <div class="top-inputs">
           <div class="field field-user">
-            <label for="username">velog 아이디</label>
+            <label for="username">아이디</label>
             <div class="input-group">
               <div class="input-prefix">
-                <span>@</span>
+                <span>velog.io/@</span>
                 <input id="username" type="text" value="velopert" placeholder="아이디" />
               </div>
-              <button type="button" class="btn btn-primary" id="applyBtn">적용</button>
+              <button type="button" class="btn btn-primary btn-icon" id="applyBtn" aria-label="적용" title="적용">
+                <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="7" cy="7" r="4.5"></circle>
+                  <path d="M10.4 10.4L13.8 13.8"></path>
+                </svg>
+              </button>
             </div>
           </div>
           <div class="field">
@@ -296,7 +301,12 @@
             <button type="button" data-tab="url">이미지 URL</button>
             <button type="button" data-tab="auto">다크/라이트 자동</button>
           </div>
-          <button type="button" class="btn btn-sm btn-primary" id="copyCodeBtn">코드 복사</button>
+          <button type="button" class="btn btn-sm btn-primary btn-icon" id="copyCodeBtn" aria-label="코드 복사" title="코드 복사">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="5.5" y="5.5" width="8" height="8" rx="1.6"></rect>
+              <path d="M10.5 5.5V4a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5"></path>
+            </svg>
+          </button>
         </div>
         <pre class="code-box" id="codeOutput"></pre>
       </section>

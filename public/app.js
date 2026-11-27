@@ -203,6 +203,17 @@ function syncControlsFromState() {
   [...$("codeTabSeg").children].forEach((b) => b.classList.toggle("active", b.dataset.tab === state.codeTab));
   [...$("stageBgSeg").children].forEach((b) => b.classList.toggle("active", b.dataset.bg === state.stageBg));
   $("stage").className = `stage bg-${state.stageBg}` + ($("stage").classList.contains("loading") ? " loading" : "");
+  updateRangeTracks();
+}
+
+function updateRangeTracks() {
+  document.querySelectorAll('input[type="range"]').forEach((el) => {
+    const min = Number(el.min || 0);
+    const max = Number(el.max || 100);
+    const val = Number(el.value || 0);
+    const pct = max > min ? ((val - min) / (max - min)) * 100 : 0;
+    el.style.setProperty("--pct", `${Math.max(0, Math.min(100, pct))}%`);
+  });
 }
 
 function showToast(msg) {
@@ -327,6 +338,7 @@ function updateVisibility() {
   $("indexVal").textContent = state.index;
   $("radiusVal").textContent = state.radius;
   $("gradAngleVal").textContent = state.gradAngle;
+  updateRangeTracks();
 
   const offFlags = getDisabledFlags();
   let activeFlags = 0;
