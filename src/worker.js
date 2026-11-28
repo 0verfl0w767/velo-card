@@ -6,6 +6,7 @@ function logApiRequest(url, status, cache) {
   const name = (url.searchParams.get("name") || url.searchParams.get("username") || "").replace(/^@/, "");
   if (status < 500 && IGNORED_LOG_USERS.has(name.toLowerCase())) return;
   const entry = JSON.stringify({
+    message: name || "(no name)",
     path: url.pathname,
     name: name || null,
     layout: url.searchParams.get("layout") || "list",
